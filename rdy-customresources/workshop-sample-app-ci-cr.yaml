@@ -2,18 +2,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ participant }}-sample-app-ci
+  name: rdy-sample-app-ci
   namespace: openshift-operators
 spec:
   project: workshop
   source:
-    repoURL: https://github.com/{{ participant }}/gitops-workshop.git
-    targetRevision: {{ participant }} 
-    path: {{ participant }}-sample-app-ci
+    repoURL: https://github.com/rdy/gitops-workshop.git
+    targetRevision: rdy 
+    path: rdy-sample-app-ci
   destination:
     # Need to get this automagically via detection
     server: https://kubernetes.default.svc
-    namespace: {{ participant }}-sample-app-ci
+    namespace: rdy-sample-app-ci
   finalizers:
   - resources-finalizer.openshift-operators.argoproj.io
   syncPolicy:

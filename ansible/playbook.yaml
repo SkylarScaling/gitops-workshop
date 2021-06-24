@@ -2,12 +2,6 @@
 - name: Setup Workshop
   hosts: local
   tasks:
-  - import_role:
-      name: darthlukan.argocd_install.install_prereqs
-
-  - import_role:
-      name: darthlukan.argocd_install.install_argocd
-
   - name: Apply {{ internal_registry }} to manifests
     block:
       - name: Get latest ArgoCD release
@@ -15,19 +9,19 @@
           user: argoproj
           repo: argo-cd
           action: latest_release
-        register: argocd_release
+        register: openshift-operators_release
 
       - name: Get ArgoCD sources
         git:
           repo: https://github.com/argoproj/argo-cd.git
           dest: "{{ playbook_dir }}/temp/argo-cd"
-          version: "{{ argocd_release.tag }}"
+          version: "{{ openshift-operators_release.tag }}"
 
       - name: Set deployment manifest facts
         set_fact:
-          redis_deployment_json: "{{ lookup('file', playbook_dir + '/temp/argo-cd/manifests/base/redis/argocd-redis-deployment.yaml') | from_yaml }}"
-          dex_deployment_json: "{{ lookup('file', playbook_dir + '/temp/argo-cd/manifests/base/dex/argocd-dex-server-deployment.yaml') | from_yaml }}"
-          server_deployment_json: "{{ lookup('file', playbook_dir + '/temp/argo-cd/manifests/base/server/argocd-server-deployment.yaml') | from_yaml }}"
+          redis_deployment_json: "{{ lookup('file', playbook_dir + '/temp/argo-cd/manifests/base/redis/openshift-operators-redis-deployment.yaml') | from_yaml }}"
+          dex_deployment_json: "{{ lookup('file', playbook_dir + '/temp/argo-cd/manifests/base/dex/openshift-operators-dex-server-deployment.yaml') | from_yaml }}"
+          server_deployment_json: "{{ lookup('file', playbook_dir + '/temp/argo-cd/manifests/base/server/openshift-operators-server-deployment.yaml') | from_yaml }}"
 
       - name: Set image facts
         set_fact:
@@ -83,10 +77,11 @@
           name: openshift-pipelines-operator-rh
           source: redhat-operators
           sourceNamespace: openshift-marketplace
+    when: 0>1
 
   - name: Deploy workshop applications
     k8s:
-      namespace: argocd
+      namespace: openshift-operators
       src: "{{ playbook_dir }}/files/{{ item }}"
       state: "{{ state }}"
       kubeconfig: "{{ kubeconfig }}"

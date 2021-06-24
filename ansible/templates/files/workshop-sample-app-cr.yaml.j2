@@ -3,7 +3,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: {{ participant }}-sample-app
-  namespace: argocd
+  namespace: openshift-operators
 spec:
   project: workshop
   source:
@@ -15,7 +15,7 @@ spec:
     server: https://kubernetes.default.svc
     namespace: {{ participant }}-sample-app 
   finalizers:
-  - resources-finalizer.argocd.argoproj.io
+  - resources-finalizer.openshift-operators.argoproj.io
   syncPolicy:
     automated:
       selfHeal: true
